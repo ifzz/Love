@@ -81,17 +81,15 @@ int graphics_Batch_add(graphics_Batch* batch, graphics_Quad const* q, float x, f
     return -1;
   }
 
-  //mat3x3 transform;
-  //m3x3_newTransform2d(&transform, x, y, r, sx, sy, ox, oy, kx, ky, q->w * batch->texture->width, q->h * batch->texture->height);
-  mat4x4 tr;
-  m4x4_newTransform2d(&tr, x, y, r, sx, sy, ox, oy, kx, ky);
-
+  mat3x3 transform;
+  m3x3_newTransform2d(&transform, x, y, r, sx, sy, ox, oy, kx, ky, q->w * batch->texture->width, q->h * batch->texture->height);
+  
   graphics_Vertex *v = batch->vertexData+ 4*batch->insertPos;
   
-  //for(int i = 0; i < 4; ++i) {
-  // m3x3_mulV2(&v[i].pos, &transform, batchQuadPts+i);
-  //v[i].color = batch->color;
-  //}
+  for(int i = 0; i < 4; ++i) {
+   m3x3_mulV2(&v[i].pos, &transform, batchQuadPts+i);
+  v[i].color = batch->color;
+  }
 
   batch->colorUsed |= batch->colorSet;
 
