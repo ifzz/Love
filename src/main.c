@@ -10,6 +10,7 @@
 
 #include "luaapi/audio.h"
 #include "luaapi/mouse.h"
+#include "luaapi/event.h"
 #include "luaapi/graphics.h"
 #include "luaapi/graphics_font.h"
 #include "luaapi/image.h"
@@ -79,9 +80,10 @@ void main_loop(void *data) {
   if(lua_pcall(loopData->luaState, 0, 0, 0)) {
     printf("Lua error: %s\n", lua_tostring(loopData->luaState, -1));
     #ifdef EMSCRIPTEN
-      emscripten_force_exit(1);
+    emscripten_force_exit(1);
+    l_running = 0;
     #else
-      exit(1);
+      l_running = 0;
     #endif
   }
 
@@ -116,7 +118,7 @@ void main_loop(void *data) {
       break;
 #ifndef EMSCRIPTEN
     case SDL_QUIT:
-      exit(0);
+      l_running = 0;
 #endif
     }
   }
@@ -128,10 +130,10 @@ int main() {
   lua_State *lua = luaL_newstate();
   luaL_openlibs(lua);
 
-
   bonding_Config config;
   l_bonding_register(lua);
   l_audio_register(lua);
+  l_event_register(lua);
   l_graphics_register(lua);
   l_image_register(lua);
   l_keyboard_register(lua);
@@ -170,9 +172,10 @@ int main() {
 
   timer_init();
 #ifdef EMSCRIPTEN
-  emscripten_set_main_loop_arg(main_loop, &mainLoopData, 0, 1);
+  if(l_event_running())
+    emscripten_set_main_loop_arg(main_loop, &mainLoopData, 0, 1);
 #else
-  for(;;) {
+  while(l_event_running()) {
     main_loop(&mainLoopData);
   }
 #endif
