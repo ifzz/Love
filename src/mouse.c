@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <SDL.h>
+#include "luaapi/mouse.h"
 
 // TODO:
 // moduleData.getRelativeMode()
@@ -21,27 +22,28 @@ static struct {
   int dx, dy;
   int visible;
   int buttons[256];
+  lua_State* luaState;
 } moduleData;
-
 
 static const char *buttonStr(int x) {
   switch (x) {
-    case SDL_BUTTON_LEFT:
-      return "l";
+  case SDL_BUTTON_LEFT:
+    return "l";
 
-    case SDL_BUTTON_RIGHT:
-      return "r";
+  case SDL_BUTTON_RIGHT:
+    return "r";
 
-    case SDL_BUTTON_MIDDLE:
-      return "m";
+  case SDL_BUTTON_MIDDLE:
+    return "m";
 
-/*
-    case SDL_BUTTON_WHEELDOWN:
-      return "wd";
+    /*
+  case SDL_BUTTON_WHEELDOWN:
+    return "wd";
 
-    case SDL_BUTTON_WHEELUP:
-      return "wu";
-*/
+  case SDL_BUTTON_WHEELUP:
+    return "wu";
+
+    */
   }
   return "?";
 }
@@ -50,36 +52,29 @@ static const char *buttonStr(int x) {
 static int buttonEnum(const char *str) {
   int res;
   switch (*str) {
-    case 'l':
-      res = SDL_BUTTON_LEFT;
-      break;
+  case 'l':
+    res = SDL_BUTTON_LEFT;
+    break;
 
-    case 'r':
-      res = SDL_BUTTON_RIGHT;
-      break;
+  case 'r':
+    res = SDL_BUTTON_RIGHT;
+    break;
 
-    case 'm':
-      res = SDL_BUTTON_MIDDLE;
-      break;
-/*
-    case 'w':
-      str++;
-      switch (*str) {
-        case 'd':
-          res = SDL_BUTTON_WHEELDOWN;
-          break; 
+  case 'm':
+    res = SDL_BUTTON_MIDDLE;
+    break;
 
-        case 'u':
-          res = SDL_BUTTON_WHEELUP;
-          break;
-        default:
-          break;
-      }
-      break;
-*/
+    /*
+  case 'wd':
+    res = SDL_BUTTON_WHEELDOWN;
+  break;
 
-    default:
-      return -1;
+  case 'up':
+    res = SDL_BUTTON_WHEELUP;
+  break;
+    */
+  default:
+    return -1;
   }
 
   if(str[1] != '\0') {
@@ -99,24 +94,19 @@ void mouse_mousemoved(int x, int y) {
   moduleData.dy = y - moduleData.y;
   moduleData.x = x;
   moduleData.y = y;
-  // TODO : Do lua callback
 }
-
-
 
 void mouse_mousepressed(int x, int y, int button) {
   mouse_mousemoved(x, y);
   moduleData.buttons[button] = 1;
-  printf("%s: %d, %d, %s\n", __func__, x, y, buttonStr(button)); // TODO: remove me
-  // TODO : Do lua callback
+
 }
 
 
 void mouse_mousereleased(int x, int y, int button) {
   mouse_mousemoved(x, y);
   moduleData.buttons[button] = 0;
-  printf("%s: %d, %d, %s\n", __func__, x, y, buttonStr(button)); // TODO: remove me
-  // TODO : Do lua callback
+
 }
 
 
@@ -131,7 +121,6 @@ int mouse_isDown(const char *str) {
   if(x < 0) {
     return -1;
   }
-
   return moduleData.buttons[x];
 }
 

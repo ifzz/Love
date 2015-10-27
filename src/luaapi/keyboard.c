@@ -26,9 +26,8 @@ int l_keyboard_isDown(lua_State* state) {
     any = any || keyboard_ispressed(
                   keyboard_getKeycode(
                     l_tools_toStringOrError(state, i + 1)));
-    if(any) {
+    if(any)
       break;
-    }
   }
 
   lua_pushboolean(state, any);

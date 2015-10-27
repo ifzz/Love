@@ -9,11 +9,6 @@ typedef struct {
   char const * name;
 } KeyName;
 
-// Not all SDL2 keycodes supported in Love2d and SDL2 decided to pack the
-// keycodes into two sets: printable and non-printable keys. Problem is, they
-// decided to put all non-printable ones above 0x40000000 so we have to
-// normalize a bit to make sure we can put them into a single array.
-
 static const KeyName keynames[] = {
   {SDLK_UNKNOWN,      "unknown"},
   {SDLK_RETURN,       "return"},
@@ -188,7 +183,6 @@ static int normalizeKeyCode(int key) {
 }
 
 void keyboard_init(void) {
-  // TODO This is dirty hack and needs to be cleaned. I'm too tired right now to do it though.
   moduleData.numKeys = 0;
   for(int i = 0; i < sizeof(keynames) / sizeof(KeyName); ++i) {
     int key = normalizeKeyCode(keynames[i].keycode);

@@ -9,7 +9,6 @@ static struct {
   int indexBufferSize;
 } moduleData;
 
-
 static void graphics_batch_makeIndexBuffer(int quadCount) {
   if(quadCount <= moduleData.indexBufferSize) {
     return;
@@ -68,7 +67,7 @@ void graphics_Batch_new(graphics_Batch* batch, graphics_Image const* texture, in
 }
 
 void graphics_Batch_free(graphics_Batch* batch) {
-  // TODO
+  free(batch->vertexData);
 }
 
 static const vec2 batchQuadPts[4] = {
@@ -78,17 +77,18 @@ static const vec2 batchQuadPts[4] = {
 int graphics_Batch_add(graphics_Batch* batch, graphics_Quad const* q, float x, float y, float r, float sx, float sy, float ox, float oy, float kx, float ky) {
 
   if(batch->insertPos == batch->maxCount) {
+    printf("Could not add more to the batch.Batch is full!");
     return -1;
   }
 
   mat3x3 transform;
   m3x3_newTransform2d(&transform, x, y, r, sx, sy, ox, oy, kx, ky, q->w * batch->texture->width, q->h * batch->texture->height);
   
-  graphics_Vertex *v = batch->vertexData+ 4*batch->insertPos;
+  graphics_Vertex *v = batch->vertexData + 4*batch->insertPos;
   
   for(int i = 0; i < 4; ++i) {
-   m3x3_mulV2(&v[i].pos, &transform, batchQuadPts+i);
-  v[i].color = batch->color;
+    m3x3_mulV2(&v[i].pos, &transform, batchQuadPts+i);
+    v[i].color = batch->color;
   }
 
   batch->colorUsed |= batch->colorSet;
@@ -104,74 +104,23 @@ int graphics_Batch_add(graphics_Batch* batch, graphics_Quad const* q, float x, f
 
   if(batch->bound) {
     batch->dirty = true;
-  } else {
-    glBufferData(GL_ARRAY_BUFFER,4*sizeof(graphics_Vertex),v);
-    //tested and it gives bad fps,TODO test more see what it can be made about it
-    // glBufferSubData(GL_ARRAY_BUFFER, batch->insertPos * 4, 4*sizeof(graphics_Vertex), v);
   }
-
   return batch->insertPos++;
 }
 
 void graphics_Batch_setBufferSizeClearing(graphics_Batch* batch, int newsize) {
   free(batch->vertexData);
   batch->vertexData = malloc(newsize * 4 * sizeof(graphics_Vertex));
-  if(!batch->bound) {
-    glBindBuffer(GL_ARRAY_BUFFER, batch->vbo);
-    glBufferData(GL_ARRAY_BUFFER, 4*newsize*sizeof(graphics_Vertex), NULL, batch->usage);
-  }
   batch->maxCount = newsize;
   batch->insertPos = 0;
   graphics_batch_makeIndexBuffer(newsize);
 }
 
 void graphics_Batch_setBufferSize(graphics_Batch* batch, int newsize) {
-  batch->vertexData = realloc(batch->vertexData, newsize * 4 * sizeof(graphics_Vertex));
-  memset(batch->vertexData+batch->insertPos, 0, (newsize-batch->insertPos) * 4 * sizeof(graphics_Vertex));
-  if(!batch->bound) {
-    glBindBuffer(GL_ARRAY_BUFFER, batch->vbo);
-    glBufferData(GL_ARRAY_BUFFER, 4*newsize*sizeof(graphics_Vertex), batch->vertexData, batch->usage);
-  }
-  batch->maxCount = newsize;
-  if(batch->insertPos > newsize) {
-    batch->insertPos = newsize;
-  }
-  graphics_batch_makeIndexBuffer(newsize);
 }
 
 void graphics_Batch_set(graphics_Batch* batch, int id, graphics_Quad const* q, float x, float y, float r, float sx, float sy, float ox, float oy, float kx, float ky) {
-  if(id >= batch->insertPos) {
-    return;
-  }
 
-  mat3x3 transform;
-  m3x3_newTransform2d(&transform, x, y, r, sx, sy, ox, oy, kx, ky, q->w * batch->texture->width, q->h * batch->texture->height);
-
-  graphics_Vertex *v = batch->vertexData + 4*id;
-  
-  for(int i = 0; i < 4; ++i) {
-    m3x3_mulV2(&v[i].pos, &transform, batchQuadPts+i);
-    float* c = (float*)(&v[i].color);
-    for(int j = 0; j < 4; ++j) {
-      c[j] = 1.0f;
-    }
-  }
-
-  v[0].uv.x = q->x;
-  v[0].uv.y = q->y;
-  v[1].uv.x = q->x;
-  v[1].uv.y = q->y + q->h;
-  v[2].uv.x = q->x + q->w;
-  v[2].uv.y = q->y;
-  v[3].uv.x = q->x + q->w;
-  v[3].uv.y = q->y + q->h;
-
-  if(batch->bound) {
-    batch->dirty = true;
-  } else {
-    glBindBuffer(GL_ARRAY_BUFFER, batch->vbo);
-    glBufferSubData(GL_ARRAY_BUFFER, id * 4, 4*sizeof(graphics_Vertex), v);
-  }
 }
 
 static const graphics_Quad fullQuad = {
@@ -203,12 +152,8 @@ void graphics_Batch_unbind(graphics_Batch *batch) {
 
   if(batch->dirty) {
     batch->dirty = false;
-
-    // TODO use BufferSubData to only upload actually used data?
-    glBindBuffer(GL_ARRAY_BUFFER, batch->vbo);
     glBufferData(GL_ARRAY_BUFFER, 4*batch->maxCount*sizeof(graphics_Vertex), NULL, batch->usage);
     glBufferSubData(GL_ARRAY_BUFFER, 0, 4*batch->insertPos*sizeof(graphics_Vertex), batch->vertexData);
-    
   }
   batch->bound = false;
 }

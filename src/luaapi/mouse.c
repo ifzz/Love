@@ -90,3 +90,18 @@ void l_mouse_register(lua_State* state) {
   moduleData.luaState = state;
   l_tools_registerModule(state, "mouse", regFuncs);
 }
+
+static void l_mouse_pressed(lua_State* luaState, int x, int y, int button){
+  lua_getglobal(luaState, "love");
+  lua_pushstring(luaState, "mousepressed");
+  lua_rawget(luaState, -3);
+  lua_pushinteger(luaState, x);
+  lua_pushinteger(luaState, y);
+  lua_pushinteger(luaState, button);
+  lua_call(luaState, 3, 0);
+}
+
+static void l_mouse_released(int x, int y, int button)
+{
+
+}

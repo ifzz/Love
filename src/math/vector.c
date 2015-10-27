@@ -189,8 +189,6 @@ void m4x4_newRotationZ(mat4x4 *out, float a) {
 }
 
 void m4x4_mulM4x4(mat4x4 *out, mat4x4 const* a, mat4x4 const* b) {
-  // TODO pretty naive approach. Someday I'll have to check whether
-  // a more cache friendly version is required
   for(int i = 0; i < 4; ++i) {
     for(int j = 0; j < 4; ++j) {
       out->m[i][j] = 0.0f;
