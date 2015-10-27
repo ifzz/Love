@@ -9,6 +9,7 @@
 #include <SDL.h>
 
 #include "luaapi/audio.h"
+#include "luaapi/mouse.h"
 #include "luaapi/graphics.h"
 #include "luaapi/graphics_font.h"
 #include "luaapi/image.h"
@@ -75,8 +76,6 @@ void main_loop(void *data) {
   lua_pushstring(loopData->luaState, "draw");
   lua_rawget(loopData->luaState, -2);
 
-  // TODO use pcall, add error handling
-  //if(lua_pcall(loopData->luaState, 0, 0, 1)) {
   if(lua_pcall(loopData->luaState, 0, 0, 0)) {
     printf("Lua error: %s\n", lua_tostring(loopData->luaState, -1));
     #ifdef EMSCRIPTEN
@@ -110,7 +109,7 @@ void main_loop(void *data) {
     case SDL_MOUSEBUTTONDOWN:
       mouse_mousepressed(event.button.x, event.button.y,
       event.button.button);
-      break;
+     break;
     case SDL_MOUSEBUTTONUP:
       mouse_mousereleased(event.button.x, event.button.y,
       event.button.button);

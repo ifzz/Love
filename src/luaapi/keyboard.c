@@ -69,6 +69,7 @@ void l_keyboard_keypressed(SDL_Keycode key, bool isrepeat) {
   if(isrepeat && !moduleData.keyRepeat) {
     return;
   }
+
   lua_getglobal(moduleData.luaState, "love");
   lua_pushstring(moduleData.luaState, "keypressed");
   lua_rawget(moduleData.luaState, -2);
