@@ -2,8 +2,6 @@
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <stdio.h>
-#include "streamsource.h"
-
 
 static struct {
   ALCdevice  *device;
@@ -17,6 +15,4 @@ void audio_init(void) {
   if(!alcMakeContextCurrent(moduleData.context)) {
     printf("Failed to initialite audio context\n");
   }
-
-  audio_streamsource_init();
 }

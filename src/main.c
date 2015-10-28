@@ -122,8 +122,6 @@ void main_loop(void *data) {
 #endif
     }
   }
-
-  audio_updateStreams();
 }
 
 int main() {

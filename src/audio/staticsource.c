@@ -1,30 +1,34 @@
 #include "staticsource.h"
-#include "decoder.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "wav_decoder.h"
+#include "vorbis_decoder.h"
 
-// TODO Put into external unit and generate that unit automatically during build
-extern audio_StaticSourceDecoder audio_vorbis_static_decoder;
-static audio_StaticSourceDecoder const *staticDecoders[] = {
-  &audio_vorbis_static_decoder
-};
+static audio_wav_DecoderData* wav;
+//static audio_vorbis_DecoderData* vorbis;
+
+static const char* get_filename_ext(const char *filename) {
+  const char *dot = strrchr(filename, '.');
+  if(!dot || dot == filename) return "";
+  return dot+1;
+}
 
 void audio_loadStatic(audio_StaticSource *source, char const * filename) {
   audio_SourceCommon_init(&source->common);
 
   alGenBuffers(1, &source->buffer);
-
-  // TODO detect file type
-  staticDecoders[0]->loadFile(source->buffer, filename);
-
+  //audio_vorbis_load(source->buffer, filename);
+  audio_wav_load(source->buffer, filename);
   alSourcei(source->common.source, AL_BUFFER, source->buffer);
 }
-
 
 void audio_StaticSource_play(audio_StaticSource *source) {
   if(source->common.state != audio_SourceState_playing) {
     audio_SourceCommon_play(&source->common);
+    printf("%d /n",source->buffer);
   }
 }
-
 
 void audio_StaticSource_setLooping(audio_StaticSource *source, bool loop) {
   alSourcei(source->common.source, AL_LOOPING, loop);

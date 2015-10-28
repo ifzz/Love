@@ -12,12 +12,10 @@ void audio_SourceCommon_init(audio_SourceCommon *source) {
   source->state = audio_SourceState_stopped;
 }
 
-
 void audio_SourceCommon_play(audio_SourceCommon *source) {
   alSourcePlay(source->source);
   source->state = audio_SourceState_playing;
 }
-
 
 void audio_SourceCommon_stop(audio_SourceCommon *source) {
   alSourceStop(source->source);
@@ -30,14 +28,12 @@ audio_SourceState audio_SourceCommon_getState(audio_SourceCommon const *source) 
   return state;
 }
 
-
 void audio_SourceCommon_pause(audio_SourceCommon *source) {
   if(source->state == audio_SourceState_playing) {
     alSourcePause(source->source);
     source->state = audio_SourceState_paused;
   }
 }
-
 
 void audio_SourceCommon_resume(audio_SourceCommon *source) {
   if(source->state == audio_SourceState_paused) {
@@ -46,11 +42,9 @@ void audio_SourceCommon_resume(audio_SourceCommon *source) {
   }
 }
 
-
 bool audio_SourceCommon_isPlaying(audio_SourceCommon const* source) {
   return source->state == audio_SourceState_playing;
 }
-
 
 bool audio_SourceCommon_isStopped(audio_SourceCommon const* source) {
   return source->state == audio_SourceState_stopped;
@@ -61,11 +55,9 @@ bool audio_SourceCommon_isPaused(audio_SourceCommon const* source) {
   return source->state == audio_SourceState_paused;
 }
 
-
 void audio_SourceCommon_setVolume(audio_SourceCommon const* source, float gain) {
   alSourcef(source->source, AL_GAIN, gain);
 }
-
 
 float audio_SourceCommon_getVolume(audio_SourceCommon const* source) {
   float gain;

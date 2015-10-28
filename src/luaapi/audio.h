@@ -3,7 +3,6 @@
 #include <lua.h>
 #include <stdbool.h>
 #include "../audio/audio.h"
-#include "../audio/streamsource.h"
 #include "../audio/staticsource.h"
 
 typedef enum {
