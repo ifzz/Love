@@ -1,4 +1,24 @@
 #include "wav_decoder.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h> // for memcmp
+#include <stdint.h> // for int16_t and int32_t
+
+struct wavfile
+{
+        char    id[4];          // should always contain "RIFF"
+        int32_t totallength;    // total file length minus 8
+        char    wavefmt[8];     // should be "WAVEfmt "
+        int32_t format;         // 16 for PCM format
+        int16_t pcm;            // 1 for PCM format
+        int16_t channels;       // channels
+        int32_t frequency;      // sampling frequency
+        int32_t bytes_per_second;
+        int16_t bytes_by_capture;
+        int16_t bits_per_sample;
+        char    data[4];        // should always contain "data"
+        int32_t bytes_in_data;
+} __attribute__((__packed__));
 
 int audio_wav_load(unsigned int buffer, char const * filename) {
         audio_wav_DecoderData* data = malloc(sizeof(audio_wav_DecoderData));
@@ -11,17 +31,70 @@ int audio_wav_load(unsigned int buffer, char const * filename) {
 
                 data->readBuffer = malloc(data->size - 44);
 
+                int format;
+                short channels;
+
+                struct wavfile header;
+
+                if ( fread(&header,sizeof(header),1,file) < 1 ) {
+                        fprintf(stderr,"Can't read input file header %s\n", filename);
+
+                }
+
                 fseek(file, 44, SEEK_SET);
                 fread(data->readBuffer,1,data->size - 44, file);
+                fread(&channels, 1,data->size, file);
+                fread(&format, sizeof(int), 4, file);
                 fseek(file,0,SEEK_SET);
-
                 fseek(file, 24, SEEK_SET);
                 fread(&data->samplerate, 1, 4, file);
                 fseek(file, 0, SEEK_SET);
+
+                //printf("%d \n", header.format);
+                //printf("%d \n", header.channels);
+
+                switch(header.format){
+                case 8:
+                        {
+                        switch(header.channels){
+                        case 1:
+                                format = AL_FORMAT_MONO8;
+                                break;
+                        case 2:
+                                format = AL_FORMAT_STEREO8;
+                                break;
+                        }
+                        break;
+                        }
+                case 16:
+                        {
+                        switch(header.channels){
+                        case 1:
+                                format = AL_FORMAT_MONO16;
+                                break;
+                        case 2:
+                                format = AL_FORMAT_STEREO16;
+                                break;
+                        }
+                        break;
+                        }
+                case 18:
+                        {
+                                switch(header.channels){
+                                case 1:
+                                        format = AL_FORMAT_MONO8;
+                                        break;
+                                case 2:
+                                        format = AL_FORMAT_MONO16;
+                                        break;
+                                }
+                                break;
+                        }
+                }
+
+                data->samplerate *= 1;
+                alBufferData(buffer, format, data->readBuffer, header.totallength, data->samplerate);
+
+                return 1;
         }
-
-        data->samplerate *= 1;
-        alBufferData(buffer, AL_FORMAT_MONO8, data->readBuffer, data->size, data->samplerate);
-
-        return 1;
 }
