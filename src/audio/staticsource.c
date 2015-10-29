@@ -5,9 +5,6 @@
 #include "wav_decoder.h"
 #include "vorbis_decoder.h"
 
-static audio_wav_DecoderData* wav;
-//static audio_vorbis_DecoderData* vorbis;
-
 static const char* get_filename_ext(const char *filename) {
   const char *dot = strrchr(filename, '.');
   if(!dot || dot == filename) return "";
@@ -18,8 +15,10 @@ void audio_loadStatic(audio_StaticSource *source, char const * filename) {
   audio_SourceCommon_init(&source->common);
 
   alGenBuffers(1, &source->buffer);
-  //audio_vorbis_load(source->buffer, filename);
-  audio_wav_load(source->buffer, filename);
+  if(strncmp(get_filename_ext(filename),"wav", 3) == 0)
+    audio_wav_load(source->buffer, filename);
+  else if((strncmp(get_filename_ext(filename), "ogg", 3)) == 0)
+    audio_vorbis_load(source->buffer, filename);
   alSourcei(source->common.source, AL_BUFFER, source->buffer);
 }
 

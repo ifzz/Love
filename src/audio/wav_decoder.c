@@ -18,7 +18,7 @@ struct wavfile
         int16_t bits_per_sample;
         char    data[4];        // should always contain "data"
         int32_t bytes_in_data;
-} __attribute__((__packed__));
+} wav;
 
 int audio_wav_load(unsigned int buffer, char const * filename) {
         audio_wav_DecoderData* data = malloc(sizeof(audio_wav_DecoderData));
@@ -32,7 +32,7 @@ int audio_wav_load(unsigned int buffer, char const * filename) {
                 data->readBuffer = malloc(data->size - 44);
 
                 int format;
-                short channels;
+                int32_t channels;
 
                 struct wavfile header;
 
@@ -40,17 +40,14 @@ int audio_wav_load(unsigned int buffer, char const * filename) {
                         fprintf(stderr,"Can't read input file header %s\n", filename);
 
                 }
-
                 fseek(file, 44, SEEK_SET);
                 fread(data->readBuffer,1,data->size - 44, file);
-                fread(&channels, 1,data->size, file);
-                fread(&format, sizeof(int), 4, file);
                 fseek(file,0,SEEK_SET);
                 fseek(file, 24, SEEK_SET);
                 fread(&data->samplerate, 1, 4, file);
                 fseek(file, 0, SEEK_SET);
 
-                //printf("%d \n", header.format);
+                //printf("%d \n", channels);
                 //printf("%d \n", header.channels);
 
                 switch(header.format){
