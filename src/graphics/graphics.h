@@ -25,8 +25,17 @@ float* graphics_getBackgroundColor(void);
 void graphics_clear(void);
 void graphics_swap(void);
 void graphics_drawArray(graphics_Quad const* quad, mat4x4 const* tr2d, GLuint ibo, GLuint count, GLenum type, GLenum indexType, float const * useColor, float ws, float hs);
+
+//Window
 int graphics_getWidth(void);
 int graphics_getHeight(void);
+int graphics_setTitle(const char* title);
+int graphics_setMode(int width, int height);
+int graphics_setFullscreen(int value, const char* mode);
+int graphics_isCreated();
+const char* graphics_getTitle();
+int graphics_setPosition(int x, int y);
+
 void graphics_setColorMask(bool r, bool g, bool b, bool a);
 void graphics_getColorMask(bool *r, bool *g, bool *b, bool *a);
 graphics_BlendMode graphics_getBlendMode();

@@ -8,6 +8,7 @@
 #include "batch.h"
 #include "quad.h"
 #include "shader.h"
+#include <stdio.h>
 
 typedef struct {
   float red;
@@ -33,6 +34,12 @@ static struct {
   GLuint polygonVBO;
   GLuint polygonIBO;
   mat4x4 projectionMatrix;
+  int isCreated;
+  int width;
+  int height;
+  const char* title;
+  int x;
+  int y;
 } moduleData;
 
 #ifndef EMSCRIPTEN
@@ -43,15 +50,20 @@ static struct {
 
 void graphics_init(int width, int height) {
   SDL_Init(SDL_INIT_VIDEO);
+  moduleData.isCreated = 0;
   #ifdef EMSCRIPTEN
     moduleData.surface = SDL_SetVideoMode(width, height, 0, SDL_OPENGL);
   #else
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-    moduleData.window = SDL_CreateWindow("Bönding", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_OPENGL);
+    moduleData.width = width;
+    moduleData.height = height;
+    moduleData.x = SDL_WINDOWPOS_UNDEFINED;
+    moduleData.y = SDL_WINDOWPOS_UNDEFINED;
+    moduleData.title = "Love";
+    moduleData.window = SDL_CreateWindow(moduleData.title, moduleData.x, moduleData.y, width, height, SDL_WINDOW_OPENGL);
     moduleData.context = SDL_GL_CreateContext(moduleData.window);
-
     moduleData.surface = SDL_GetWindowSurface(moduleData.window);
   #endif
 
@@ -62,6 +74,8 @@ void graphics_init(int width, int height) {
   m4x4_scale(&moduleData.projectionMatrix, 2.0f / width, 2.0f / height, 0.0f);
   m4x4_newTranslation(&moduleData.projectionMatrix, -1.0f, 1.0f, 0.0f);
   m4x4_scale(&moduleData.projectionMatrix, 2.0f / width, -2.0f / height, 0.0f);
+
+  moduleData.isCreated = 1;
 
   graphics_setColor(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -127,12 +141,51 @@ void graphics_drawArray(graphics_Quad const* quad, mat4x4 const* tr2d, GLuint ib
   glDrawElements(type, count, indexType, 0);
 }
 
+int graphics_setTitle(const char* title){
+  moduleData.title = title;
+  SDL_SetWindowTitle(moduleData.window,title);
+  return 1;
+}
+
+int graphics_setMode(int width, int height){
+  moduleData.width = width;
+  moduleData.height = height;
+  SDL_SetWindowSize(moduleData.window, width, height);
+  return 1;
+}
+
 int graphics_getWidth(void) {
   return moduleData.surface->w;
 }
 
 int graphics_getHeight(void) {
   return moduleData.surface->h;
+}
+
+const char* graphics_getTitle()
+{
+  return moduleData.title;
+}
+
+int graphics_setPosition(int x, int y)
+{
+  if(x <= -1) // center x
+    x = SDL_WINDOWPOS_UNDEFINED;
+  if(y <= -1) // center y
+    y = SDL_WINDOWPOS_UNDEFINED;
+  SDL_SetWindowPosition(moduleData.window, x, y);
+  return 1;
+}
+
+int graphics_setFullscreen(int value, const char* mode){
+  if ((strncmp(mode,"desktop", 7) == 0) && value == 1)
+    SDL_SetWindowFullscreen(moduleData.window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+  return 1;
+}
+
+int graphics_isCreated()
+{
+  return moduleData.isCreated;
 }
 
 float* graphics_getColor(void) {
