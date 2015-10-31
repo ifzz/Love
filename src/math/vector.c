@@ -1,7 +1,6 @@
 #include "vector.h"
 #include <tgmath.h>
 
-
 void m4x4_scale(mat4x4 *inout, float x, float y, float z) {
   for(int i = 0; i < 3; ++i) {
     inout->m[0][i] *= x;

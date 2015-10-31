@@ -15,7 +15,6 @@
 #include "graphics_shader.h"
 #include "graphics_window.h"
 
-
 static int l_graphics_getBackgroundColor(lua_State* state) {
   float * colors = graphics_getBackgroundColor();
 
@@ -67,10 +66,10 @@ static int l_graphics_clear(lua_State* state) {
 }
 
 static const graphics_Quad defaultQuad = {
-  .x = 0.0,
-  .y = 0.0,
-  .w = 1.0,
-  .h = 1.0
+  .x = 0.0f,
+  .y = 0.0f,
+  .w = 1.0f,
+  .h = 1.0f
 };
 static int l_graphics_draw(lua_State* state) {
   l_graphics_Image const * image = NULL;
@@ -81,7 +80,7 @@ static int l_graphics_draw(lua_State* state) {
   if(l_graphics_isImage(state, 1)) {
     if(l_graphics_isQuad(state, 2)) {
       quad = l_graphics_toQuad(state, 2);
-      baseidx = 3;
+      baseidx = 2;
     }
     image = l_graphics_toImage(state, 1);
   } else if(l_graphics_isBatch(state, 1)) {
@@ -91,15 +90,15 @@ static int l_graphics_draw(lua_State* state) {
     lua_error(state);
   }
   
-  float x  = luaL_optnumber(state, 2,     0.0f);
-  float y  = luaL_optnumber(state, 3, 0.0f);
-  float r  = luaL_optnumber(state, 4, 0.0f);
-  float sx = luaL_optnumber(state, 5, 1.0f);
-  float sy = luaL_optnumber(state, 6, sx);
-  float ox = luaL_optnumber(state, 7, 0.0f);
-  float oy = luaL_optnumber(state, 8, 0.0f);
-  float kx = luaL_optnumber(state, 9, 0.0f);
-  float ky = luaL_optnumber(state, 10, 0.0f);
+  float x  = luaL_optnumber(state, baseidx+1, 0.0f);
+  float y  = luaL_optnumber(state, baseidx+2, 0.0f);
+  float r  = luaL_optnumber(state, baseidx+3, 0.0f);
+  float sx = luaL_optnumber(state, baseidx+4, 1.0f);
+  float sy = luaL_optnumber(state, baseidx+5, sx);
+  float ox = luaL_optnumber(state, baseidx+6, 0.0f);
+  float oy = luaL_optnumber(state, baseidx+7, 0.0f);
+  float kx = luaL_optnumber(state, baseidx+8, 0.0f);
+  float ky = luaL_optnumber(state, baseidx+9, 0.0f);
 
   if(image) {
     graphics_Image_draw(&image->image, quad, x, y, r, sx, sy, ox, oy, kx, ky);

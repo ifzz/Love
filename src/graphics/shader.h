@@ -1,5 +1,5 @@
 #pragma once
-
+#include <stdbool.h>
 #include <GL/gl.h>
 #include "../math/vector.h"
 #include "quad.h"

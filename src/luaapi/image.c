@@ -7,7 +7,6 @@ static struct {
   int imageDataMT;
 } moduleData;
 
-
 int l_image_newImageData(lua_State* state) {
   image_ImageData* imageData = (image_ImageData*)lua_newuserdata(state, sizeof(image_ImageData));
   int s1type = lua_type(state, 1);
