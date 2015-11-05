@@ -12,7 +12,7 @@ sources = [
   'audio/audio.c',
   'audio/source.c',
   'audio/staticsource.c',
-  'audio/streamsource.c',
+  'audio/wav_decoder.c',
   'audio/vorbis_decoder.c',
   'filesystem/filesystem.c',
   'graphics/batch.c',
@@ -29,6 +29,7 @@ sources = [
   'luaapi/math.c',
   'luaapi/filesystem.c',
   'luaapi/keyboard.c',
+  'luaapi/event.c',
   'luaapi/bonding.c',
   'luaapi/mouse.c',
   'luaapi/graphics.c',
@@ -50,6 +51,7 @@ sources = [
   'mouse.c',
   'keyboard.c',
   'tools/utf8.c',
+  'tools/log.c',
   'timer/timer.c',
 
   # SLRE
@@ -189,13 +191,13 @@ def compile(filename):
 def build():
   global output, CFLAGS, LDFLAGS, CC, LD
   if '--native' in sys.argv:
-    output = 'motor2d'
+    output = 'love'
     CFLAGS = '-g -O{optimize} -I/usr/include/SDL2 -DFT2_BUILD_LIBRARY -Wall -g -std=c11 -I{ftconfig}  -I{srcdir}/3rdparty/lua/src'.format(optimize=optimize, link_time_optimize=link_time_optimize, srcdir = os.path.relpath(SRCDIR), ftconfig=".") + " " + ftinc
     LDFLAGS = '-lm -lSDL2 -lGL -lGLEW -lopenal -g'.format(optimize=optimize, link_time_optimize=link_time_optimize)
     CC = 'clang'
     LD = 'clang'
   else:
-    output = 'motor2d.js'
+    output = 'love.js'
     CFLAGS = '-O{optimize} --memory-init-file 0 --llvm-lto {link_time_optimize} -DFT2_BUILD_LIBRARY -Wall -std=c11 -I{ftconfig}  -I{srcdir}/3rdparty/lua/src'.format(optimize=optimize, link_time_optimize=link_time_optimize, srcdir = os.path.relpath(SRCDIR), ftconfig=".") + " " + ftinc
     LDFLAGS = '-O{optimize} --llvm-lto {link_time_optimize} --memory-init-file 0'.format(optimize=optimize, link_time_optimize=link_time_optimize)
     CC = 'emcc'

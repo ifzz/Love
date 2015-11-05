@@ -75,7 +75,7 @@ static int l_graphics_draw(lua_State* state) {
   l_graphics_Image const * image = NULL;
   l_graphics_Batch const * batch = NULL;
   graphics_Quad const * quad = &defaultQuad;
-  int baseidx = 2;
+  int baseidx = 1;
 
   if(l_graphics_isImage(state, 1)) {
     if(l_graphics_isQuad(state, 2)) {

@@ -34,13 +34,6 @@ int l_graphics_newImage(lua_State* state) {
 }
 
 static int l_graphics_gcImage(lua_State* state) {
-  /*
-  if(!l_graphics_isImage(state, 1)) {
-    lua_pushstring(state, "Expected Image");
-    return lua_error(state);
-  }
-  */
-
   l_graphics_Image* img = l_graphics_toImage(state, 1);
 
   graphics_Image_free(&img->image);
