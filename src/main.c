@@ -48,6 +48,17 @@ typedef struct {
   int errhand;
 } MainLoopData;
 
+void quit_function(lua_State* state)
+{
+  lua_getglobal(state, "love");
+  lua_pushstring(state, "quit");
+  lua_rawget(state, -2);
+  if(lua_pcall(state, 0, 0, 1)) {
+    printf("Error in love.quit: %s\n", lua_tostring(state, -1));
+  }
+  lua_pop(state, 1);
+}
+
 void main_loop(void *data) {
   MainLoopData* loopData = (MainLoopData*)data;
 
@@ -62,11 +73,12 @@ void main_loop(void *data) {
 
   if(lua_pcall(loopData->luaState, 1, 0, 0)) {
     printf("Lua error: %s\n", lua_tostring(loopData->luaState, -1));
-    #ifdef EMSCRIPTEN
-      emscripten_force_exit(1);
-    #else
-      exit(1);
-    #endif
+#ifdef EMSCRIPTEN
+    quit_function(loopData->luaState);
+    emscripten_force_exit(1);
+#else
+    exit(1);
+#endif
   }
 
   graphics_clear();
@@ -76,12 +88,13 @@ void main_loop(void *data) {
 
   if(lua_pcall(loopData->luaState, 0, 0, 0)) {
     printf("Lua error: %s\n", lua_tostring(loopData->luaState, -1));
-    #ifdef EMSCRIPTEN
+#ifdef EMSCRIPTEN
+    quit_function(loopData->luaState);
     emscripten_force_exit(1);
     l_running = 0;
     #else
-      l_running = 0;
-    #endif
+    l_running = 0;
+#endif
   }
 
   graphics_swap();
@@ -113,6 +126,7 @@ void main_loop(void *data) {
       break;
 #ifndef EMSCRIPTEN
     case SDL_QUIT:
+      quit_function(loopData->luaState);
       l_running = 0;
 #endif
     }
@@ -138,11 +152,8 @@ int main() {
   l_boot(lua, &config);
 
   keyboard_init();
-  config.window.width = 800;
-  config.window.height = 600;
   graphics_init(config.window.width, config.window.height);
   audio_init();
-
 
   if(luaL_dofile(lua, "main.lua")) {
     printf("Error: %s\n", lua_tostring(lua, -1));
@@ -171,5 +182,7 @@ int main() {
   while(l_event_running()) {
     main_loop(&mainLoopData);
   }
+  if(!l_event_running())
+    quit_function(lua);
 #endif
 }

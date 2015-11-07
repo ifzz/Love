@@ -10,6 +10,7 @@ static char const bootScript[] =
   "love.mousereleased = function() end\n"
   "love.keypressed = function() end\n"
   "love.keyreleased = function() end\n"
+  "love.quit = function() end\n"
   "love.textinput = function() end\n"
   "local conf = {\n"
   "  window = {\n"
