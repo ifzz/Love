@@ -21,6 +21,20 @@ static int l_filesystem_read(lua_State* state) {
   return 2;
 }
 
+static int l_filesystem_exists(lua_State* state)
+{
+  const char* filename = l_tools_toStringOrError(state, 1);
+  return filesystem_exists(filename);
+}
+
+static int l_filesystem_write(lua_State* state)
+{
+  const char* filename = l_tools_toStringOrError(state, 1);
+  const char* data = l_tools_toStringOrError(state, 2);
+  filesystem_write(filename, data);
+
+  return 2;
+}
 
 static int l_filesystem_load(lua_State* state) {
   char const* filename = l_tools_toStringOrError(state, 1);
@@ -39,6 +53,8 @@ static int l_filesystem_load(lua_State* state) {
 static luaL_Reg const regFuncs[] = {
   {"load", l_filesystem_load},
   {"read", l_filesystem_read},
+  {"exists", l_filesystem_exists},
+  {"write", l_filesystem_write},
   {NULL, NULL}
 };
 
