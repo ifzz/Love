@@ -212,7 +212,6 @@ char const * keyboard_getKeyName(SDL_Keycode key) {
 }
 
 SDL_Keycode keyboard_getKeycode(char const* name) {
-  // TODO this is really slow. use appropriate data structure
   for(int i = 0; i < moduleData.numKeys; ++i) {
     if(!strcmp(name, keynames[i].name)) {
       return keynames[i].keycode;

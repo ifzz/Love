@@ -23,9 +23,7 @@
 #include "luaapi/math.h"
 
 #include "graphics/graphics.h"
-
 #include "audio/audio.h"
-
 #include "keyboard.h"
 #include "mouse.h"
 #include "timer/timer.h"
@@ -46,7 +44,6 @@ int lua_errorhandler(lua_State *state) {
 }
 
 typedef struct {
-//  double lastTime;
   lua_State *luaState;
   int errhand;
 } MainLoopData;
@@ -59,10 +56,10 @@ void main_loop(void *data) {
   lua_getglobal(loopData->luaState, "love");
   lua_pushstring(loopData->luaState, "update");
 
-  // TODO use pcall, add error handling
+
   lua_rawget(loopData->luaState, -2);
   lua_pushnumber(loopData->luaState, timer_getDelta());
-  //if(lua_pcall(loopData->luaState, 1, 0, 1)) {
+
   if(lua_pcall(loopData->luaState, 1, 0, 0)) {
     printf("Lua error: %s\n", lua_tostring(loopData->luaState, -1));
     #ifdef EMSCRIPTEN
@@ -90,8 +87,6 @@ void main_loop(void *data) {
   graphics_swap();
 
   lua_pop(loopData->luaState, 1);
-
-  //loopData->lastTime = newTime;
 
   SDL_Event event;
   while(SDL_PollEvent(&event)) {
@@ -158,7 +153,7 @@ int main() {
   lua_pushstring(lua, "load");
   lua_rawget(lua, -2);
   if(lua_pcall(lua, 0, 0, 1)) {
-    printf("Errorin love.load: %s\n", lua_tostring(lua, -1));
+    printf("Error in love.load: %s\n", lua_tostring(lua, -1));
   }
   lua_pop(lua, 1);
 
@@ -170,8 +165,8 @@ int main() {
 
   timer_init();
 #ifdef EMSCRIPTEN
-  if(l_event_running())
-    emscripten_set_main_loop_arg(main_loop, &mainLoopData, 0, 1);
+  //TODO find a way to quit(love.event.quit) love on web?
+  emscripten_set_main_loop_arg(main_loop, &mainLoopData, 0, 1);
 #else
   while(l_event_running()) {
     main_loop(&mainLoopData);

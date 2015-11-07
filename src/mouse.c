@@ -97,9 +97,9 @@ void mouse_mousemoved(int x, int y) {
 }
 
 void mouse_mousepressed(int x, int y, int button) {
+  l_mouse_pressed(x, y, button);
   mouse_mousemoved(x, y);
   moduleData.buttons[button] = 1;
-  l_mouse_pressed(x, y, button);
 }
 
 
