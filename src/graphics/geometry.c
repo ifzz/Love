@@ -69,6 +69,47 @@ static void drawBuffer(int vertices, int indices, GLenum type){
 
 }
 
+void graphics_geometry_drawCircle(float x, float y, float radius, int segments){
+  growBuffers(segments+1, segments+1);
+
+  float step = (PI*2) / segments;
+  float angle = 0;
+  for(int i = 0; i < segments; ++i, angle -= step) {
+    float * base = moduleData.data + 6*(i);
+    base[0] = sin(angle) * radius + x;
+    base[1] = cos(angle) * radius + y;
+    moduleData.index[i+1] = i+1;
+  }
+  drawBuffer(segments+1, segments, GL_LINE_STRIP);
+}
+
+void graphics_geometry_fillCircle(float x, float y, float radius, int segments){
+  growBuffers(segments+1, segments+1);
+
+  float step = (PI*2) / segments;
+  float angle = 0;
+  moduleData.data[0] = x;
+  moduleData.data[1] = y;
+  moduleData.data[2] = 1.0f;
+  moduleData.data[3] = 1.0f;
+  moduleData.data[4] = 1.0f;
+  moduleData.data[5] = 1.0f;
+  moduleData.index[segments] = 0;
+  moduleData.index[segments+1] = 1;
+  for(int i = 0; i < segments; ++i, angle -= step) {
+    float * base = moduleData.data + 6*(i+1);
+    base[0] = sin(angle) * radius + x;
+    base[1] = cos(angle) * radius + y;
+    base[2] = 1.0f;
+    base[3] = 1.0f;
+    base[4] = 1.0f;
+    base[5] = 1.0f;
+    moduleData.index[i+1] = i+1;
+  }
+
+  drawBuffer(segments+1, segments+2, GL_TRIANGLE_FAN);
+}
+
 void graphics_geometry_fillRectangle(float x, float y, float w, float h){
   growBuffers(8, 10);
 

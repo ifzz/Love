@@ -8,6 +8,21 @@ static struct {
   float vertSize;
 } moduleData;
 
+static int l_geometry_circle(lua_State* state) {
+  const char* type = l_tools_toStringOrError(state, 1);
+  float x = l_tools_toNumberOrError(state, 2);
+  float y = l_tools_toNumberOrError(state, 3);
+  float radius = l_tools_toNumberOrError(state, 4);
+  float segments = l_tools_toNumberOrError(state, 5);
+
+  if (strncmp(type,"line",4) == 0)
+    graphics_geometry_drawCircle(x, y, radius, segments);
+  else if(strncmp(type,"fill", 4) == 0)
+    graphics_geometry_fillCircle(x, y, radius, segments);
+
+  return 0;
+}
+
 static int l_geometry_rectangle(lua_State* state) {
   const char* type = l_tools_toStringOrError(state, 1);
   float x = l_tools_toNumberOrError(state, 2);
@@ -36,6 +51,7 @@ static int l_geometry_getLineWidth(lua_State* state) {
 
 static luaL_Reg const geometryFuncs[] = {
   {"rectangle",    l_geometry_rectangle},
+  {"circle",       l_geometry_circle},
   {"setLineWidth", l_geometry_setLineWidth},
   {"getLineWidth", l_geometry_getLineWidth},
   {NULL,NULL}
