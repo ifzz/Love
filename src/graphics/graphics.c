@@ -8,6 +8,7 @@
 #include "batch.h"
 #include "quad.h"
 #include "shader.h"
+#include "geometry.h"
 #include <stdio.h>
 
 typedef struct {
@@ -83,6 +84,7 @@ void graphics_init(int width, int height) {
   graphics_batch_init();
   graphics_image_init();
   graphics_shader_init();
+  graphics_geometry_init();
 
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
   glPixelStorei(GL_PACK_ALIGNMENT, 1);

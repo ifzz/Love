@@ -12,6 +12,7 @@
 #include "graphics_image.h"
 #include "graphics_quad.h"
 #include "graphics_font.h"
+#include "graphics_geometry.h"
 #include "graphics_shader.h"
 #include "graphics_window.h"
 
@@ -310,6 +311,7 @@ int l_graphics_register(lua_State* state) {
   l_graphics_font_register(state);
   l_graphics_batch_register(state);
   l_graphics_window_register(state);
+  l_graphics_geometry_register(state);
 
   return 0;
 }
