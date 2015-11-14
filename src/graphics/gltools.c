@@ -1,5 +1,11 @@
 #include "gltools.h"
-# include <GL/gl.h>
+
+#ifdef EMSCRIPTEN
+#include <GLES2/gl2.h>
+#else
+#include <GL/gl.h>
+#endif
+
 
 void graphics_Texture_setFilter(GLuint texID, graphics_Filter const* filter) {
   glBindTexture(GL_TEXTURE_2D, texID);
@@ -48,7 +54,7 @@ void graphics_Texture_setFilter(GLuint texID, graphics_Filter const* filter) {
   
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, filter->maxAnisotropy);
+  //  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, filter->maxAnisotropy);
   
   // Not supported by WebGL, still interesting for native builds.
   // Accept GL_INVALID_ENUM on WebGL
@@ -104,5 +110,5 @@ void graphics_Texture_getFilter(GLuint texID, graphics_Filter * filter) {
   glGetTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,         &fil);
 
   filter->magMode = (fil == GL_LINEAR) ? graphics_FilterMode_linear : graphics_FilterMode_nearest;
-  glGetTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, &filter->maxAnisotropy);
+  //  glGetTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, &filter->maxAnisotropy);
 }

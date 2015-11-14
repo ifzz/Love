@@ -4,7 +4,12 @@
 #include "shader.h"
 #include "../3rdparty/slre/slre.h"
 
+#ifdef EMSCRIPTEN
+#include <GLES2/gl2.h>
+#else
 #include <GL/gl.h>
+#endif
+
 
 static struct {
   graphics_Shader *activeShader;

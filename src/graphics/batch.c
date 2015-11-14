@@ -77,7 +77,7 @@ static const vec2 batchQuadPts[4] = {
 int graphics_Batch_add(graphics_Batch* batch, graphics_Quad const* q, float x, float y, float r, float sx, float sy, float ox, float oy, float kx, float ky) {
 
   if(batch->insertPos == batch->maxCount) {
-    printf("Could not add more to the batch.Batch is full!");
+
     return -1;
   }
 

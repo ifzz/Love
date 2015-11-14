@@ -2,7 +2,11 @@
 
 #include "../image/imagedata.h"
 #include "quad.h"
+#ifdef EMSCRIPTEN
+#include <GLES2/gl2.h>
+#else
 #include <GL/gl.h>
+#endif
 
 #include "gltools.h"
 

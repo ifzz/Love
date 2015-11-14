@@ -54,7 +54,7 @@ static void growBuffers(int vertices, int indices){
 static void drawBuffer(int vertices, int indices, GLenum type){
   glBindBuffer(GL_ARRAY_BUFFER, moduleData.dataVBO);
   glBufferData(GL_ARRAY_BUFFER, vertices*6*sizeof(float), moduleData.data, GL_DYNAMIC_DRAW);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, moduleData.dataIBO);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, moduleData.dataIBO);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices*sizeof(unsigned short),moduleData.index, GL_DYNAMIC_DRAW);
 
   graphics_Shader* shader = graphics_getShader();

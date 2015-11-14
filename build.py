@@ -18,6 +18,7 @@ sources = [
   'graphics/batch.c',
   'graphics/font.c',
   'graphics/graphics.c',
+  'graphics/geometry.c',
   'graphics/image.c',
   'graphics/matrixstack.c',
   'graphics/quad.c',
@@ -32,7 +33,8 @@ sources = [
   'luaapi/event.c',
   'luaapi/bonding.c',
   'luaapi/mouse.c',
-  'luaapi/graphics.c',
+  'luaapi/graphics.c', 
+  'luaapi/graphics_geometry.c',
   'luaapi/graphics_batch.c',
   'luaapi/graphics_font.c',
   'luaapi/graphics_image.c',
@@ -198,8 +200,8 @@ def build():
     LD = 'clang'
   else:
     output = 'love.js'
-    CFLAGS = '-O{optimize} --memory-init-file 0 --llvm-lto {link_time_optimize} -DFT2_BUILD_LIBRARY -Wall -std=c11 -I{ftconfig}  -I{srcdir}/3rdparty/lua/src'.format(optimize=optimize, link_time_optimize=link_time_optimize, srcdir = os.path.relpath(SRCDIR), ftconfig=".") + " " + ftinc
-    LDFLAGS = '-O{optimize} --llvm-lto {link_time_optimize} --memory-init-file 0'.format(optimize=optimize, link_time_optimize=link_time_optimize)
+    CFLAGS = '-s USE_SDL=1 -s -FULL_ES2=1  -O{optimize} --memory-init-file 0 --llvm-lto {link_time_optimize} -DFT2_BUILD_LIBRARY -Wall -std=c11 -I{ftconfig}  -I{srcdir}/3rdparty/lua/src'.format(optimize=optimize, link_time_optimize=link_time_optimize, srcdir = os.path.relpath(SRCDIR), ftconfig=".") + " " + ftinc
+    LDFLAGS = '-s USE_SDL=1 -O{optimize} --llvm-lto {link_time_optimize} --memory-init-file 0 -o love.html --preload-file main.lua --preload-file arrow.png'.format(optimize=optimize, link_time_optimize=link_time_optimize)
     CC = 'emcc'
     LD = 'emcc'
 

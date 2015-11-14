@@ -1,6 +1,11 @@
 #pragma once
 
+#ifdef EMSCRIPTEN
+#include <GLES2/gl2.h>
+#else
 #include <GL/gl.h>
+#endif
+
 #include "quad.h"
 #include "image.h"
 #include "../math/vector.h"

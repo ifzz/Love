@@ -1,7 +1,13 @@
 #include <stdint.h>
 #include <SDL.h>
 #include "graphics.h"
+
+#ifdef EMSCRIPTEN
+#include <GLES2/gl2.h>
+#else
 #include <GL/gl.h>
+#endif
+
 #include "../math/vector.h"
 #include "matrixstack.h"
 #include "font.h"
@@ -84,7 +90,7 @@ void graphics_init(int width, int height) {
   graphics_batch_init();
   graphics_image_init();
   graphics_shader_init();
-  graphics_geometry_init();
+  //graphics_geometry_init();
 
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
   glPixelStorei(GL_PACK_ALIGNMENT, 1);
@@ -144,15 +150,19 @@ void graphics_drawArray(graphics_Quad const* quad, mat4x4 const* tr2d, GLuint ib
 }
 
 int graphics_setTitle(const char* title){
+#ifndef EMSCRIPTEN
   moduleData.title = title;
   SDL_SetWindowTitle(moduleData.window,title);
+#endif
   return 1;
 }
 
 int graphics_setMode(int width, int height){
+#ifndef EMSCRIPTEN
   moduleData.width = width;
   moduleData.height = height;
   SDL_SetWindowSize(moduleData.window, width, height);
+#endif
   return 1;
 }
 
@@ -171,17 +181,22 @@ const char* graphics_getTitle()
 
 int graphics_setPosition(int x, int y)
 {
+#ifndef EMSCRIPTEN
   if(x <= -1) // center x
     x = SDL_WINDOWPOS_UNDEFINED;
   if(y <= -1) // center y
     y = SDL_WINDOWPOS_UNDEFINED;
   SDL_SetWindowPosition(moduleData.window, x, y);
+#endif
   return 1;
 }
 
 int graphics_setFullscreen(int value, const char* mode){
+
+#ifndef EMSCRIPTEN
   if ((strncmp(mode,"desktop", 7) == 0) && value == 1)
     SDL_SetWindowFullscreen(moduleData.window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+  #endif
   return 1;
 }
 

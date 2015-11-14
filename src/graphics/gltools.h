@@ -1,6 +1,10 @@
 #pragma once
 
+#ifdef EMSCRIPTEN
+#include <GLES2/gl2.h>
+#else
 #include <GL/gl.h>
+#endif
 
 typedef enum {
   graphics_FilterMode_none = 0,
