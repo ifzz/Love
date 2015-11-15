@@ -162,6 +162,8 @@ int graphics_setMode(int width, int height){
   moduleData.width = width;
   moduleData.height = height;
   SDL_SetWindowSize(moduleData.window, width, height);
+#else
+  moduleData.surface = SDL_SetVideoMode(width, height, 0, SDL_OPENGL);
 #endif
   return 1;
 }

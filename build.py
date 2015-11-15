@@ -201,7 +201,7 @@ def build():
   else:
     output = 'love.js'
     CFLAGS = '-s USE_SDL=1 -s -FULL_ES2=1  -O{optimize} --memory-init-file 0 --llvm-lto {link_time_optimize} -DFT2_BUILD_LIBRARY -Wall -std=c11 -I{ftconfig}  -I{srcdir}/3rdparty/lua/src'.format(optimize=optimize, link_time_optimize=link_time_optimize, srcdir = os.path.relpath(SRCDIR), ftconfig=".") + " " + ftinc
-    LDFLAGS = '-s USE_SDL=1 -O{optimize} --llvm-lto {link_time_optimize} --memory-init-file 0 -o love.html --preload-file main.lua --preload-file arrow.png'.format(optimize=optimize, link_time_optimize=link_time_optimize)
+    LDFLAGS = '-s USE_SDL=1 -s ALLOW_MEMORY_GROWTH=1 --no-heap-copy -O{optimize} --llvm-lto {link_time_optimize} --memory-init-file 0 -o love.html --preload-file main.lua --preload-file player.lua --preload-file map.lua --preload-file playstate.lua --preload-file bg.lua --preload-file lib/ --preload-file res/player.png --preload-file res/environment_32.png --preload-file res/spb_blue.lua --preload-file res/bgs/ --preload-file res/bg_square.png'.format(optimize=optimize, link_time_optimize=link_time_optimize)
     CC = 'emcc'
     LD = 'emcc'
 
@@ -224,26 +224,6 @@ def build():
     if os.system(cmd) != 0:
       print("Failed")
 
-def buildLoader():
-  if '--native' in sys.argv:
-    print("Cannot build native version of JS loader, you won't need one!")
-
-  closure = os.path.join(os.path.dirname(os.path.realpath(shutil.which("emcc"))), "third_party", "closure-compiler", "compiler.jar")
-  if not os.path.exists(closure):
-    closure = shutil.which('closure-compiler')
-  else:
-    java = shutil.which("java")
-    closure = "{java} -jar {closure}".format(java=java, closure=closure)
-
-  htmlpath = os.path.join(os.path.dirname(sys.argv[0]), "html")
-  os.system("echo \"var logodata = 'data:image/png;base64,$(base64 -w 0 {logo})';\" >logo.js".format(logo=os.path.join(htmlpath, "motor.png")))
-  os.system("echo \"var errordata = 'data:image/png;base64,$(base64 -w 0 {logo})';\" >error.js".format(logo=os.path.join(htmlpath, "error.png")))
-  cmd = "{closure} --language_in ECMASCRIPT5 --js=logo.js --js=error.js --js={html}/zip.js --js={html}/inflate.js --js={html}/zip-ext.js --js={html}/motor2dloader.js --js_output_file=motor2dloader.js".format(html=htmlpath, closure=closure)
-#  cmd = "cat logo.js error.js {html}/zip.js {html}/inflate.js {html}/zip-ext.js {html}/motor2dloader.js >motor2dloader.js".format(html=htmlpath)
-  os.system(cmd)
-  for i in ["motor2d.html"]:
-    shutil.copyfile(os.path.join(htmlpath, i), i)
-
 def remove(f):
   if os.path.exists(f):
     os.remove(f)
@@ -265,7 +245,6 @@ def usage():
   print(sys.argv[0] + " (build|buildloader|clean) [--native]")
   print("  Verbs:")
   print("    build         build motor2d executable")
-  print("    buildloader   build the JavaScript loader for engine and data")
   print("    clean         delete intermediate files and final executable (doesn't clean loader)")
   print("  Flags:")
   print("    --native      build native executable (not supported for buildloader)")
@@ -274,8 +253,6 @@ if len(sys.argv) == 1:
   usage()
 elif sys.argv[1] == 'build':
   build()
-elif sys.argv[1] == 'buildloader':
-  buildLoader()
 elif sys.argv[1] == 'clean':
   clean()
 
