@@ -4,7 +4,7 @@
 #include "graphics.h"
 
 static struct {
-  GLuint sharedIndexBuffer;
+  unsigned int sharedIndexBuffer;
   uint16_t *sharedIndexBufferData;
   int indexBufferSize;
 } moduleData;
@@ -25,8 +25,7 @@ static void graphics_batch_makeIndexBuffer(int quadCount) {
   }
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, moduleData.sharedIndexBuffer);
-
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint16_t) *6*quadCount, moduleData.sharedIndexBufferData, GL_STATIC_DRAW);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint16_t)*6*quadCount, moduleData.sharedIndexBufferData, GL_STATIC_DRAW);
   moduleData.indexBufferSize = quadCount;
 }
 
@@ -74,25 +73,28 @@ static const vec2 batchQuadPts[4] = {
   {0,0},{0,1},{1,0},{1,1}
 };
 
-int graphics_Batch_add(graphics_Batch* batch, graphics_Quad const* q, float x, float y, float r, float sx, float sy, float ox, float oy, float kx, float ky) {
+int graphics_Batch_add(graphics_Batch* batch, graphics_Quad const* q, int text, float x, float y, float r, float sx, float sy, float ox, float oy, float kx, float ky) {
 
   if(batch->insertPos == batch->maxCount) {
-
+    printf("%s \n", "Spritebatch has reached it's limits!");
     return -1;
   }
 
+
   mat3x3 transform;
-  m3x3_newTransform2d(&transform, x, y, r, sx, sy, ox, oy, kx, ky, q->w * batch->texture->width, q->h * batch->texture->height);
+  if (text == 1)
+    m3x3_newTransform2d(&transform, x, y, r, sx, sy, ox, oy, kx, ky, q->w * batch->texture->width, q->h * batch->texture->height);
   
   graphics_Vertex *v = batch->vertexData + 4*batch->insertPos;
-  
-  for(int i = 0; i < 4; ++i) {
-    m3x3_mulV2(&v[i].pos, &transform, batchQuadPts+i);
-    v[i].color = batch->color;
+
+  if (text == 1){
+    for(int i = 0; i < 4; ++i) {
+      m3x3_mulV2(&v[i].pos, &transform, batchQuadPts+i);
+      v[i].color = batch->color;
+    }
   }
 
   batch->colorUsed |= batch->colorSet;
-
   v[0].uv.x = q->x;
   v[0].uv.y = q->y;
   v[1].uv.x = q->x;
@@ -101,26 +103,32 @@ int graphics_Batch_add(graphics_Batch* batch, graphics_Quad const* q, float x, f
   v[2].uv.y = q->y;
   v[3].uv.x = q->x + q->w;
   v[3].uv.y = q->y + q->h;
+  if (text == 0){
+    float px1 = batch->texture->width + x;
+    float py1 = batch->texture->height + y;
+    float px2 = -batch->texture->width + x;
+    float py2 = -batch->texture->height + y;
 
+    v[0].pos.x = px2;
+    v[0].pos.y = py2;
+    v[0].color = batch->color;
+
+    v[1].pos.x = px1;
+    v[1].pos.y = py2;
+    v[1].color = batch->color;
+
+    v[2].pos.x = px1;
+    v[2].pos.y = py1;
+    v[2].color = batch->color;
+
+    v[3].pos.x = px2;
+    v[3].pos.y = py1;
+    v[3].color = batch->color;
+  }
   if(batch->bound) {
     batch->dirty = true;
   }
   return batch->insertPos++;
-}
-
-void graphics_Batch_setBufferSizeClearing(graphics_Batch* batch, int newsize) {
-  free(batch->vertexData);
-  batch->vertexData = malloc(newsize * 4 * sizeof(graphics_Vertex));
-  batch->maxCount = newsize;
-  batch->insertPos = 0;
-  graphics_batch_makeIndexBuffer(newsize);
-}
-
-void graphics_Batch_setBufferSize(graphics_Batch* batch, int newsize) {
-}
-
-void graphics_Batch_set(graphics_Batch* batch, int id, graphics_Quad const* q, float x, float y, float r, float sx, float sy, float ox, float oy, float kx, float ky) {
-
 }
 
 static const graphics_Quad fullQuad = {
@@ -139,6 +147,15 @@ void graphics_Batch_draw(graphics_Batch const* batch,
   m4x4_newTransform2d(&tr2d, x, y, r, sx, sy, ox, oy, kx, ky);
   float const * color = batch->colorUsed ? defaultColor : graphics_getColor();
   graphics_drawArray(&fullQuad, &tr2d, moduleData.sharedIndexBuffer, batch->insertPos*6, GL_TRIANGLES, GL_UNSIGNED_SHORT, color, 1.0f, 1.0f);
+
+}
+
+void graphics_Batch_setBufferSizeClearing(graphics_Batch* batch, int newsize) {
+  free(batch->vertexData);
+  batch->vertexData = malloc(newsize * 4 * sizeof(graphics_Vertex));
+  batch->maxCount = newsize;
+  batch->insertPos = 0;
+  graphics_batch_makeIndexBuffer(newsize);
 }
 
 void graphics_Batch_bind(graphics_Batch *batch) {
@@ -147,13 +164,15 @@ void graphics_Batch_bind(graphics_Batch *batch) {
 
 void graphics_Batch_unbind(graphics_Batch *batch) {
   if(!batch->bound) {
+    printf("%s \n", "Call spritebatch bind first!");
     return;
   }
 
   if(batch->dirty) {
-    batch->dirty = false;
     glBufferData(GL_ARRAY_BUFFER, 4*batch->maxCount*sizeof(graphics_Vertex), NULL, batch->usage);
     glBufferSubData(GL_ARRAY_BUFFER, 0, 4*batch->insertPos*sizeof(graphics_Vertex), batch->vertexData);
+    batch->dirty = false;
+
   }
   batch->bound = false;
 }

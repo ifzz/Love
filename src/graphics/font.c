@@ -220,7 +220,7 @@ void graphics_Font_render(graphics_Font* font, char const* text, int px, int py,
     // This will create the glyph if required
     graphics_Glyph const* glyph = graphics_Font_findGlyph(font, cp);
 
-    graphics_Batch_add(&moduleData.batches[glyph->textureIdx], &glyph->textureCoords, x+glyph->bearingX, y-glyph->bearingY, 0, 1, 1, 0, 0, 0, 0);
+    graphics_Batch_add(&moduleData.batches[glyph->textureIdx], &glyph->textureCoords, 1, x+glyph->bearingX, y-glyph->bearingY, 0, 1, 1, 0, 0, 0, 0);
 
     x += glyph->advance;
   }

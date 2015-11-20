@@ -24,7 +24,7 @@ void graphics_geometry_init(){
   glGenBuffers(1,&moduleData.dataVBO);
   glBindBuffer(GL_ARRAY_BUFFER, moduleData.dataVBO);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, moduleData.dataIBO);
-
+  
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 6*sizeof(float), 0);
   glEnableVertexAttribArray(2);

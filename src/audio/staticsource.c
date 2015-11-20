@@ -14,18 +14,21 @@ static const char* get_filename_ext(const char *filename) {
 void audio_loadStatic(audio_StaticSource *source, char const * filename) {
   audio_SourceCommon_init(&source->common);
 
+
+
   alGenBuffers(1, &source->buffer);
   if(strncmp(get_filename_ext(filename),"wav", 3) == 0)
     audio_wav_load(source->buffer, filename);
   else if((strncmp(get_filename_ext(filename), "ogg", 3)) == 0)
     audio_vorbis_load(source->buffer, filename);
+
+    printf("%s \n","Can't load filename: " , filename);
   alSourcei(source->common.source, AL_BUFFER, source->buffer);
 }
 
 void audio_StaticSource_play(audio_StaticSource *source) {
   if(source->common.state != audio_SourceState_playing) {
     audio_SourceCommon_play(&source->common);
-    printf("%d /n",source->buffer);
   }
 }
 

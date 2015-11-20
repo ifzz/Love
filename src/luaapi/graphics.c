@@ -84,8 +84,8 @@ static int l_graphics_draw(lua_State* state) {
       baseidx = 2;
     }
     image = l_graphics_toImage(state, 1);
-  } else if(l_graphics_isBatch(state, 1)) {
-    batch = l_graphics_toBatch(state, 1);
+  } else if(l_graphics_isBatch(state, baseidx)) {
+    batch = l_graphics_toBatch(state, baseidx);
   } else {
     lua_pushstring(state, "expected image or spritebatch");
     lua_error(state);
@@ -95,7 +95,7 @@ static int l_graphics_draw(lua_State* state) {
   float y  = luaL_optnumber(state, baseidx+2, 0.0f);
   float r  = luaL_optnumber(state, baseidx+3, 0.0f);
   float sx = luaL_optnumber(state, baseidx+4, 1.0f);
-  float sy = luaL_optnumber(state, baseidx+5, sx);
+  float sy = luaL_optnumber(state, baseidx+5, 1.0f);
   float ox = luaL_optnumber(state, baseidx+6, 0.0f);
   float oy = luaL_optnumber(state, baseidx+7, 0.0f);
   float kx = luaL_optnumber(state, baseidx+8, 0.0f);
@@ -110,7 +110,6 @@ static int l_graphics_draw(lua_State* state) {
 }
 
 static int l_graphics_push(lua_State* state) {
-  //printf(")) Push\n");
   if(matrixstack_push()) {
     lua_pushstring(state, "Matrix stack overflow");
     return lua_error(state);

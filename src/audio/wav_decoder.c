@@ -32,7 +32,6 @@ int audio_wav_load(unsigned int buffer, char const * filename) {
                 data->readBuffer = malloc(data->size - 44);
 
                 int format;
-                int32_t channels;
 
                 struct wavfile header;
 
@@ -40,17 +39,24 @@ int audio_wav_load(unsigned int buffer, char const * filename) {
                         fprintf(stderr,"Can't read input file header %s\n", filename);
 
                 }
+                char convert_format;
                 fseek(file, 44, SEEK_SET);
                 fread(data->readBuffer,1,data->size - 44, file);
                 fseek(file,0,SEEK_SET);
+
+                fseek(file,16,SEEK_SET);
+                fread(&convert_format,1, 4,file);
+                fseek(file,0,SEEK_SET);
+
                 fseek(file, 24, SEEK_SET);
                 fread(&data->samplerate, 1, 4, file);
                 fseek(file, 0, SEEK_SET);
 
                 //printf("%d \n", channels);
-                //printf("%d \n", header.channels);
+                //printf("%d \n", header.format);
 
-                switch(header.format){
+
+                switch(convert_format){
                 case 8:
                         {
                         switch(header.channels){
@@ -88,10 +94,7 @@ int audio_wav_load(unsigned int buffer, char const * filename) {
                                 break;
                         }
                 }
-
-                data->samplerate *= 1;
-                alBufferData(buffer, format, data->readBuffer, header.totallength, data->samplerate);
-
+                alBufferData(buffer, format,  data->readBuffer, header.totallength, data->samplerate);
                 return 1;
         }
 }

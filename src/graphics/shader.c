@@ -320,15 +320,17 @@ void graphics_Shader_activate(mat4x4 const* projection, mat4x4 const* transform,
   float s[2] = { ws, hs };
 
   glUniform1i(       moduleData.activeShader->uniformLocations.tex,               0);
-  glUniformMatrix4fv(moduleData.activeShader->uniformLocations.projection,  1, 0, (GLfloat const*)projection);
-  glUniformMatrix2fv(moduleData.activeShader->uniformLocations.textureRect, 1, 0, (GLfloat const*)textureRect);
+  glUniformMatrix4fv(moduleData.activeShader->uniformLocations.projection,  1, 0, (float const*)projection);
+  glUniformMatrix2fv(moduleData.activeShader->uniformLocations.textureRect, 1, 0, (float const*)textureRect);
   glUniform4fv(      moduleData.activeShader->uniformLocations.color,       1,                    useColor);
   glUniform2fv(      moduleData.activeShader->uniformLocations.size,        1,                    s);
-  glUniformMatrix4fv(moduleData.activeShader->uniformLocations.transform,   1, 0, (GLfloat const*)transform);
+  glUniformMatrix4fv(moduleData.activeShader->uniformLocations.transform,   1, 0, (float const*)transform);
 
-  for(int i = 0; i < moduleData.activeShader->textureUnitCount; ++i) {
-    glActiveTexture(GL_TEXTURE0 + moduleData.activeShader->textureUnits[i].unit);
-    glBindTexture(GL_TEXTURE_2D, moduleData.activeShader->textureUnits[i].boundTexture);
+  if (moduleData.activeShader->textureUnitCount > 0){
+    for(int i = 0; i < moduleData.activeShader->textureUnitCount; ++i) {
+      glActiveTexture(GL_TEXTURE0 + moduleData.activeShader->textureUnits[i].unit);
+      glBindTexture(GL_TEXTURE_2D, moduleData.activeShader->textureUnits[i].boundTexture);
+    }
   }
 }
 
