@@ -29,6 +29,7 @@ void graphics_geometry_init(){
   glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 6*sizeof(float), 0);
   glEnableVertexAttribArray(2);
   glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)(2*sizeof(float)));
+
   moduleData.lineWidth = 1.0f;
   graphics_Shader_new(&moduleData.plainColorShader, NULL,
                       "vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_cords ) {\n"
@@ -51,6 +52,8 @@ static void growBuffers(int vertices, int indices){
   }
 }
 
+
+static graphics_Quad quad = {0.0f,0.0f,1.0f,1.0f};
 static void drawBuffer(int vertices, int indices, GLenum type){
   glBindBuffer(GL_ARRAY_BUFFER, moduleData.dataVBO);
   glBufferData(GL_ARRAY_BUFFER, vertices*6*sizeof(float), moduleData.data, GL_DYNAMIC_DRAW);
@@ -62,7 +65,6 @@ static void drawBuffer(int vertices, int indices, GLenum type){
   mat4x4 tr;
   m4x4_newIdentity(&tr);
 
-  graphics_Quad quad = {0,0,1,1};
   graphics_drawArray(&quad,&tr,moduleData.dataIBO, indices, type, GL_UNSIGNED_SHORT, graphics_getColor(), 1, 1);
 
   graphics_setShader(shader);

@@ -24,7 +24,6 @@ typedef struct {
   graphics_Vertex *vertexData;
   int maxCount;
   int insertPos;
-  GLuint vao;
   bool dirty;
   bool bound;
   vec4 color;

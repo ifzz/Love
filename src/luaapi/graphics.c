@@ -310,7 +310,7 @@ int l_graphics_register(lua_State* state) {
   l_graphics_font_register(state);
   l_graphics_batch_register(state);
   l_graphics_window_register(state);
-  //l_graphics_geometry_register(state);
+  l_graphics_geometry_register(state);
 
   return 0;
 }

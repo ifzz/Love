@@ -201,7 +201,7 @@ def build():
   else:
     output = 'love.js'
     CFLAGS = '-s USE_SDL=1 -s -FULL_ES2=1  -O{optimize} --memory-init-file 0 --llvm-lto {link_time_optimize} -DFT2_BUILD_LIBRARY -Wall -std=c11 -I{ftconfig}  -I{srcdir}/3rdparty/lua/src'.format(optimize=optimize, link_time_optimize=link_time_optimize, srcdir = os.path.relpath(SRCDIR), ftconfig=".") + " " + ftinc
-    LDFLAGS = '-s USE_SDL=1 -s ALLOW_MEMORY_GROWTH=1 --no-heap-copy -O{optimize} --llvm-lto {link_time_optimize} --memory-init-file 0 -o love.html --preload-file main.lua --preload-file player.lua --preload-file map.lua --preload-file playstate.lua --preload-file bg.lua --preload-file lib/ --preload-file res/player.png --preload-file res/environment_32.png --preload-file res/spb_blue.lua --preload-file res/bgs/ --preload-file res/bg_square.png'.format(optimize=optimize, link_time_optimize=link_time_optimize)
+    LDFLAGS = '-s USE_SDL=1 -s ALLOW_MEMORY_GROWTH=1 --no-heap-copy -O{optimize} --llvm-lto {link_time_optimize} --memory-init-file 0 -o love.html --preload-file lib/ --preload-file main.lua --preload-file logic/ --preload-file res/ --preload-file res/bgs/ --preload-file res/sounds/'.format(optimize=optimize, link_time_optimize=link_time_optimize)
     CC = 'emcc'
     LD = 'emcc'
 

@@ -86,11 +86,11 @@ void graphics_init(int width, int height) {
 
   graphics_setColor(1.0f, 1.0f, 1.0f, 1.0f);
 
+  graphics_shader_init();
   graphics_font_init();
   graphics_batch_init();
   graphics_image_init();
-  graphics_shader_init();
-  //graphics_geometry_init();
+  graphics_geometry_init();
 
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
   glPixelStorei(GL_PACK_ALIGNMENT, 1);

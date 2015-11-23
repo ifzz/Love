@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include "batch.h"
 #include "graphics.h"
 
@@ -95,6 +96,28 @@ int graphics_Batch_add(graphics_Batch* batch, graphics_Quad const* q, int text, 
   }
 
   batch->colorUsed |= batch->colorSet;
+  if (text == 0){
+    float px1 = x + batch->texture->width;
+    float py1 = y + batch->texture->height;
+
+    v[0].pos.x = x;
+    v[0].pos.y = y;
+    v[0].color = batch->color;
+
+    v[1].pos.x = px1;
+    v[1].pos.y = y;
+    v[1].color = batch->color;
+
+    v[2].pos.x = x;
+    v[2].pos.y = py1;
+    v[2].color = batch->color;
+
+    v[3].pos.x = px1;
+    v[3].pos.y = py1;
+    v[3].color = batch->color;
+
+  }
+
   v[0].uv.x = q->x;
   v[0].uv.y = q->y;
   v[1].uv.x = q->x;
@@ -103,28 +126,7 @@ int graphics_Batch_add(graphics_Batch* batch, graphics_Quad const* q, int text, 
   v[2].uv.y = q->y;
   v[3].uv.x = q->x + q->w;
   v[3].uv.y = q->y + q->h;
-  if (text == 0){
-    float px1 = batch->texture->width + x;
-    float py1 = batch->texture->height + y;
-    float px2 = -batch->texture->width + x;
-    float py2 = -batch->texture->height + y;
 
-    v[0].pos.x = px2;
-    v[0].pos.y = py2;
-    v[0].color = batch->color;
-
-    v[1].pos.x = px1;
-    v[1].pos.y = py2;
-    v[1].color = batch->color;
-
-    v[2].pos.x = px1;
-    v[2].pos.y = py1;
-    v[2].color = batch->color;
-
-    v[3].pos.x = px2;
-    v[3].pos.y = py1;
-    v[3].color = batch->color;
-  }
   if(batch->bound) {
     batch->dirty = true;
   }
@@ -146,7 +148,8 @@ void graphics_Batch_draw(graphics_Batch const* batch,
   mat4x4 tr2d;
   m4x4_newTransform2d(&tr2d, x, y, r, sx, sy, ox, oy, kx, ky);
   float const * color = batch->colorUsed ? defaultColor : graphics_getColor();
-  graphics_drawArray(&fullQuad, &tr2d, moduleData.sharedIndexBuffer, batch->insertPos*6, GL_TRIANGLES, GL_UNSIGNED_SHORT, color, 1.0f, 1.0f);
+  graphics_drawArray(&fullQuad, &tr2d, moduleData.sharedIndexBuffer, batch->insertPos*6,
+                     GL_TRIANGLES, GL_UNSIGNED_SHORT, color, 1.0f, 1.0f);
 
 }
 
@@ -169,7 +172,7 @@ void graphics_Batch_unbind(graphics_Batch *batch) {
   }
 
   if(batch->dirty) {
-    glBufferData(GL_ARRAY_BUFFER, 4*batch->maxCount*sizeof(graphics_Vertex), NULL, batch->usage);
+    glBufferData(GL_ARRAY_BUFFER, 4*batch->maxCount*sizeof(graphics_Vertex), batch->vbo, batch->usage);
     glBufferSubData(GL_ARRAY_BUFFER, 0, 4*batch->insertPos*sizeof(graphics_Vertex), batch->vertexData);
     batch->dirty = false;
 
