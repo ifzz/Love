@@ -4,7 +4,7 @@
 #ifdef EMSCRIPTEN
 #include <GLES2/gl2.h>
 #else
-#include <GL/gl.h>
+#include <GL/glew.h>
 #endif
 
 #include "../math/vector.h"

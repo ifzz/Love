@@ -1,5 +1,4 @@
 #include "vorbis_decoder.h"
-
 #include "../3rdparty/stb/stb_vorbis.c"
 
 static stb_vorbis *vorbis;

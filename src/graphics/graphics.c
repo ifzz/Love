@@ -5,7 +5,7 @@
 #ifdef EMSCRIPTEN
 #include <GLES2/gl2.h>
 #else
-#include <GL/gl.h>
+#include <GL/glew.h>
 #endif
 
 #include "../math/vector.h"
@@ -73,7 +73,10 @@ void graphics_init(int width, int height) {
     moduleData.context = SDL_GL_CreateContext(moduleData.window);
     moduleData.surface = SDL_GetWindowSurface(moduleData.window);
   #endif
-
+    GLenum res = glewInit();
+    if(res != GLEW_OK){
+      printf("Could not init glew...");
+    }
   glViewport(0,0,width,height);
 
   matrixstack_init();

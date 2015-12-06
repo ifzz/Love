@@ -6,7 +6,7 @@ const static int stackSize = 32;
 
 static struct {
   int head;
-  mat4x4 stack[stackSize];
+  mat4x4 stack[32];
 } moduleData;
 
 inline mat4x4* matrixstack_head() {

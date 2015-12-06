@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(simple)
+project(love)
 
 FILE(
   GLOB SOURCE_FILES
@@ -20,18 +20,27 @@ src/timer/*.h
 src/timer/*.c
 src/*.c
 src/*.h
+
 )
 
 set(love_package "love")
 set(love_creator "Muresan Vlad")
 set(love_copyright "Copyright (c) 2015, ${love_creator}.")
 
-include_directories(src/3rdparty/stb)
+INCLUDE(FindPkgConfig)
+
+PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
+INCLUDE_DIRECTORIES(${SDL2_INCLUDE_DIRS})
+
+include_directories(src/3rdparty/glew/include)
 
 add_executable(
   love
   ${SOURCE_FILES}
-  src/3rdparty/stb
+  src/3rdparty/glew/src/glew.c
+  src/3rdparty/stb/stb_image.c
+  src/3rdparty/stb/stb_vorbis.c
+  src/3rdparty/stb/stb_vorbis.h
   )
 
 #freetype
@@ -41,11 +50,11 @@ set(FREETYPE_LIBRARIES freetype)
 include_directories(src/3rdparty/freetype/include)
 
 if(APPLE)
-  target_link_libraries(love ${FREETYPE_LIBRARIES})
+  target_link_libraries(love  ${OPENGL_LIBRARIES} ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES})
 endif()
 
 if(UNIX)
-  target_link_libraries(love dl ${FREETYPE_LIBRARIES})
+  target_link_libraries(love dl  ${OPENGL_LIBRARIES} ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES})
 endif()
 
 IF(WIN32)
@@ -75,5 +84,5 @@ IF(WIN32)
 ENDIF(WIN32)
 
 if(WIN32)
-  target_link_libraries(love ws2_32.lib ${FREETYPE_LIBRARIES})
+  target_link_libraries(love ws2_32.lib  ${OPENGL_LIBRARIES} ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES})
 endif()
