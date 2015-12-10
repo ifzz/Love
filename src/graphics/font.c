@@ -75,7 +75,7 @@ graphics_Glyph const* graphics_Font_findGlyph(graphics_Font *font, unsigned unic
   memcpy(newGlyphs + i + 1, set->glyphs + i, (set->numGlyphs - i) * sizeof(graphics_Glyph));
   free((void*)set->glyphs);
   set->glyphs = newGlyphs;
-  set->numGlyphs = 3;
+  set->numGlyphs++;
 
   // The storage for the new glyph data has been prepared in the last step,
   // we can just use it.
@@ -98,6 +98,19 @@ graphics_Glyph const* graphics_Font_findGlyph(graphics_Font *font, unsigned unic
       buf[2*(i*b.width + c) + 1] = row[c];
     }
     row += b.pitch;
+  }
+
+  if(font->glyphs.currentX + GlyphTexturePadding + b.width > font->glyphs.textureWidth) {
+    font->glyphs.currentX = GlyphTexturePadding;
+    font->glyphs.currentY += font->glyphs.currentRowHeight;
+    font->glyphs.currentRowHeight = GlyphTexturePadding;
+  }
+
+  if(font->glyphs.currentY + GlyphTexturePadding + b.rows > font->glyphs.textureHeight) {
+    font->glyphs.currentX = GlyphTexturePadding;
+    font->glyphs.currentY = GlyphTexturePadding;
+    font->glyphs.currentRowHeight = GlyphTexturePadding;
+    graphics_GlyphMap_newTexture(&font->glyphs);
   }
 
   // Bind current texture and upload data to the appropriate position.
