@@ -305,12 +305,12 @@ int l_graphics_register(lua_State* state) {
   l_tools_registerModule(state, "graphics", regFuncs);
   
   l_graphics_shader_register(state);
+  l_graphics_geometry_register(state);
   l_graphics_image_register(state);
   l_graphics_quad_register(state);
   l_graphics_font_register(state);
   l_graphics_batch_register(state);
   l_graphics_window_register(state);
-  l_graphics_geometry_register(state);
 
   return 0;
 }
