@@ -22,6 +22,42 @@ static int l_audio_SourceCommon_play(lua_State* state) {
   return 0;
 }
 
+static int l_audio_SourceCommon_stop(lua_State* state) {
+  audio_SourceCommon* source = (audio_SourceCommon*)lua_touserdata(state, 1);
+  audio_SourceCommon_stop(source);
+  return 0;
+}
+
+static int l_audio_SourceCommon_pause(lua_State* state) {
+  audio_SourceCommon* source = (audio_SourceCommon*)lua_touserdata(state, 1);
+  audio_SourceCommon_pause(source);
+  return 0;
+}
+
+static int l_audio_SourceCommon_resume(lua_State* state) {
+  audio_SourceCommon* source = (audio_SourceCommon*)lua_touserdata(state, 1);
+  audio_SourceCommon_resume(source);
+  return 0;
+}
+
+static int l_audio_SourceCommon_isStopped(lua_State* state) {
+  audio_SourceCommon* source = (audio_SourceCommon*)lua_touserdata(state, 1);
+  audio_SourceCommon_isStopped(source);
+  return 0;
+}
+
+static int l_audio_SourceCommon_isPlaying(lua_State* state) {
+  audio_SourceCommon* source = (audio_SourceCommon*)lua_touserdata(state, 1);
+  audio_SourceCommon_isPlaying(source);
+  return 0;
+}
+
+static int l_audio_SourceCommon_isPaused(lua_State* state) {
+  audio_SourceCommon* source = (audio_SourceCommon*)lua_touserdata(state, 1);
+  audio_SourceCommon_isPaused(source);
+  return 0;
+}
+
 static int l_audio_SourceCommon_setVolume(lua_State *state) {
   float gain = l_tools_toNumberOrError(state, 2);
   audio_SourceCommon *source = (audio_SourceCommon*)lua_touserdata(state, 1);
@@ -39,6 +75,12 @@ static luaL_Reg const SourceMetatableFuncs[] = {
   {"play",       l_audio_SourceCommon_play},
   {"setVolume",  l_audio_SourceCommon_setVolume},
   {"getVolume",  l_audio_SourceCommon_getVolume},
+  {"isPlaying",  l_audio_SourceCommon_isPlaying},
+  {"isPaused",  l_audio_SourceCommon_isPaused},
+  {"isStopped",  l_audio_SourceCommon_isStopped},
+  {"pause",  l_audio_SourceCommon_pause},
+  {"resume",  l_audio_SourceCommon_resume},
+  {"stop",  l_audio_SourceCommon_stop},
   {NULL, NULL}
 };
 
