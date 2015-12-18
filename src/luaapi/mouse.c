@@ -7,12 +7,6 @@ static struct {
 } moduleData;
 
 
-static int l_mouse_isVisible(lua_State *state) {
-  lua_pushboolean(state, mouse_isVisible());
-  return 1;
-}
-
-
 static int l_mouse_isDown(lua_State *state) {
   const char *name = luaL_checkstring(state, 1);
   int res = mouse_isDown(name);
@@ -52,6 +46,10 @@ static int l_mouse_setPosition(lua_State *state) {
   return 0;
 } 
 
+static int l_mouse_isVisible(lua_State *state) {
+  lua_pushboolean(state, mouse_isVisible());
+  return 1;
+}
 
 static int l_mouse_setVisible(lua_State *state) {
   mouse_setVisible(lua_toboolean(state, 1));

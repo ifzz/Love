@@ -7,8 +7,14 @@ static int l_event_quit(lua_State* state){
         return 1;
 }
 
+static int l_event_swap(lua_State* state){
+        swap_At = lua_tonumber(state, 1);
+        return 1;
+}
+
 static luaL_Reg const regFuncs[] = {
         {"quit", l_event_quit},
+        {"swapAt", l_event_swap},
         {NULL,NULL}
 };
 
