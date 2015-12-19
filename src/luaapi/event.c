@@ -14,7 +14,7 @@ static int l_event_swap(lua_State* state){
 
 static luaL_Reg const regFuncs[] = {
         {"quit", l_event_quit},
-        {"swapAt", l_event_swap},
+        {"swap", l_event_swap},
         {NULL,NULL}
 };
 

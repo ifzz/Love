@@ -59,8 +59,6 @@ void quit_function(lua_State* state)
   lua_pop(state, 1);
 }
 
-float swap_interval  = 0.0f;
-float swap_at = 1.0f;
 void main_loop(void *data) {
   MainLoopData* loopData = (MainLoopData*)data;
 
@@ -73,14 +71,11 @@ void main_loop(void *data) {
   lua_rawget(loopData->luaState, -2);
   lua_pushnumber(loopData->luaState, timer_getDelta());
 
-  swap_interval += timer_getDelta();
-  if (swap_interval > swap_At == 0 ? swap_At == swap_at : swap_At){
+  if (swap_At == 1){
     if(luaL_dofile(loopData->luaState, "main.lua")) {
       printf("Error: %s\n", lua_tostring(loopData->luaState, -1));
-    }else
-      printf("Hotswap has succeded!");
-    swap_interval = 0.0f;
-  }
+    }
+ }
 
 
   if(lua_pcall(loopData->luaState, 1, 0, 0)) {
@@ -150,6 +145,7 @@ int main() {
   luaL_openlibs(lua);
 
   bonding_Config config;
+
   l_bonding_register(lua);
   l_audio_register(lua);
   l_event_register(lua);
