@@ -110,6 +110,18 @@ void main_loop(void *data) {
 
   SDL_Event event;
   while(SDL_PollEvent(&event)) {
+    if (event.type == SDL_WINDOWEVENT) {
+      switch (event.window.event) {
+      case SDL_WINDOWEVENT_SHOWN:
+        graphics_setFocus(1);
+        break;
+      case SDL_WINDOWEVENT_HIDDEN:
+        graphics_setFocus(0);
+        break;
+      default:
+        break;
+      }
+    }
     switch(event.type) {
     case SDL_KEYDOWN:
       keyboard_keypressed(event.key.keysym.sym);

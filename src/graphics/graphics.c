@@ -160,6 +160,17 @@ int graphics_setTitle(const char* title){
   return 1;
 }
 
+int graphics_hasFocus()
+{
+  return focus;
+}
+
+int graphics_setFocus(int value)
+{
+  focus = value;
+  return 1;
+}
+
 int graphics_setMode(int width, int height){
 #ifndef EMSCRIPTEN
   moduleData.width = width;
