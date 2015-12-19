@@ -71,7 +71,32 @@ static int l_audio_SourceCommon_getVolume(lua_State *state) {
   return 1;
 }
 
+static int l_audio_setVolumeGlobal(lua_State* state){
+  double volume = lua_tonumber(state, 1);
+  if(volume <= 0.0f)
+    volume = 0.0f;
+  else if (volume >= 1.0f)
+    volume = 1.0f;
+  audio_setVolume(volume);
+  return 1;
+}
+
+static int l_audio_SourceCommon_setPitch(lua_State *state) {
+  float pitch = l_tools_toNumberOrError(state, 2);
+  audio_SourceCommon *source = (audio_SourceCommon*)lua_touserdata(state, 1);
+  audio_SourceCommon_setPitch(source, pitch);
+  return 0;
+}
+
+static int l_audio_SourceCommon_getPitch(lua_State *state) {
+  audio_SourceCommon *source = (audio_SourceCommon*)lua_touserdata(state, 1);
+  lua_pushnumber(state, audio_SourceCommon_getPitch(source));
+  return 1;
+}
+
 static luaL_Reg const SourceMetatableFuncs[] = {
+  {"setPitch",   l_audio_SourceCommon_setPitch},
+  {"getPitch",   l_audio_SourceCommon_getPitch},
   {"play",       l_audio_SourceCommon_play},
   {"setVolume",  l_audio_SourceCommon_setVolume},
   {"getVolume",  l_audio_SourceCommon_getVolume},
@@ -86,6 +111,7 @@ static luaL_Reg const SourceMetatableFuncs[] = {
 
 static luaL_Reg const regFuncs[] = {
   {"newSource", l_audio_newSource},
+  {"setVolume", l_audio_setVolumeGlobal},
   {NULL, NULL}
 };
 

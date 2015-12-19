@@ -4,3 +4,4 @@
 #include <stdbool.h>
 
 void audio_init(void);
+void audio_setVolume(double value);

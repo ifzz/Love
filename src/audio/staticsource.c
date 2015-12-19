@@ -21,8 +21,6 @@ void audio_loadStatic(audio_StaticSource *source, char const * filename) {
     audio_wav_load(source->buffer, filename);
   else if((strncmp(get_filename_ext(filename), "ogg", 3)) == 0)
     audio_vorbis_load(source->buffer, filename);
-
-    printf("%s \n","Can't load filename: " , filename);
   alSourcei(source->common.source, AL_BUFFER, source->buffer);
 }
 
@@ -36,12 +34,10 @@ void audio_StaticSource_setLooping(audio_StaticSource *source, bool loop) {
   alSourcei(source->common.source, AL_LOOPING, loop);
 }
 
-
 void audio_StaticSource_stop(audio_StaticSource *source) {
   audio_SourceCommon_stop(&source->common);
   audio_StaticSource_rewind(source);
 }
-
 
 void audio_StaticSource_rewind(audio_StaticSource *source) {
   alSourceRewind(source->common.source);
@@ -50,7 +46,6 @@ void audio_StaticSource_rewind(audio_StaticSource *source) {
     audio_SourceCommon_play(&source->common);
   }
 }
-
 
 void audio_StaticSource_pause(audio_StaticSource *source) {
   audio_SourceCommon_pause(&source->common);

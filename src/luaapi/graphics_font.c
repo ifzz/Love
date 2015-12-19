@@ -246,7 +246,10 @@ static int l_graphics_Font_setFilter(lua_State* state) {
   return 0;
 }
 
-
+static int l_graphics_getFont(lua_State* state) {
+  lua_rawgeti(state, LUA_REGISTRYINDEX, moduleData.currentFontRef);
+  return 1;
+}
 
 static luaL_Reg const fontMetatableFuncs[] = {
   {"__gc",               l_graphics_gcFont},
@@ -263,6 +266,7 @@ static luaL_Reg const fontMetatableFuncs[] = {
 
 static luaL_Reg const fontFreeFuncs[] = {
   {"newFont",            l_graphics_newFont},
+  {"getFont",            l_graphics_getFont},
   {"setFont",            l_graphics_setFont},
   {"printf",             l_graphics_printf},
   {"print",              l_graphics_print},
