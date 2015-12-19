@@ -27,6 +27,9 @@ void graphics_swap(void);
 void graphics_drawArray(graphics_Quad const* quad, mat4x4 const* tr2d, GLuint ibo, GLuint count, GLenum type, GLenum indexType, float const * useColor, float ws, float hs);
 
 //Window
+int mouse_focus;
+int graphics_hasMouseFocus();
+int graphics_setMouseFocus(int value);
 int focus;
 int graphics_hasFocus();
 int graphics_setFocus(int value);

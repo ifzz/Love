@@ -48,6 +48,12 @@ static int l_graphics_window_hasFocus(lua_State* state){
   return 1;
 }
 
+
+static int l_graphics_window_hasMouseFocus(lua_State* state){
+  lua_pushinteger(state, graphics_hasMouseFocus());
+  return 1;
+}
+
 static luaL_Reg const windowFreeFuncs[] = {
   {"setFullscreen", l_graphics_window_setFullscreen},
   {"setMode", l_graphics_window_setMode},
@@ -58,6 +64,7 @@ static luaL_Reg const windowFreeFuncs[] = {
   {"getWidth", l_graphics_window_getWidth},
   {"getHeight", l_graphics_window_getHeight},
   {"hasFocus",  l_graphics_window_hasFocus},
+  {"hasMouseFocus",  l_graphics_window_hasMouseFocus},
   {NULL, NULL}
 };
 

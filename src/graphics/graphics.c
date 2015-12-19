@@ -160,13 +160,20 @@ int graphics_setTitle(const char* title){
   return 1;
 }
 
-int graphics_hasFocus()
-{
+int graphics_hasMouseFocus(){
+  return mouse_focus;
+}
+
+int graphics_setMouseFocus(int value){
+  mouse_focus = value;
+  return 1;
+}
+
+int graphics_hasFocus(){
   return focus;
 }
 
-int graphics_setFocus(int value)
-{
+int graphics_setFocus(int value){
   focus = value;
   return 1;
 }

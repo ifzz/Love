@@ -112,11 +112,17 @@ void main_loop(void *data) {
   while(SDL_PollEvent(&event)) {
     if (event.type == SDL_WINDOWEVENT) {
       switch (event.window.event) {
-      case SDL_WINDOWEVENT_SHOWN:
-        graphics_setFocus(1);
+      case SDL_WINDOWEVENT_ENTER:
+        graphics_setMouseFocus(1);
         break;
-      case SDL_WINDOWEVENT_HIDDEN:
+      case SDL_WINDOWEVENT_LEAVE:
+        graphics_setMouseFocus(0);
+        break;
+      case SDL_WINDOWEVENT_FOCUS_LOST:
         graphics_setFocus(0);
+        break;
+      case SDL_WINDOWEVENT_FOCUS_GAINED:
+        graphics_setFocus(1);
         break;
       default:
         break;
